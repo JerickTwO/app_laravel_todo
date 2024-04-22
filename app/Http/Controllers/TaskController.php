@@ -16,7 +16,7 @@ class TaskController extends Controller
     public function create()
     {
         return view('tasks.index', compact('tasks'));
-    }
+    }   
 
     public function store(Request $request)
     {
@@ -42,6 +42,15 @@ class TaskController extends Controller
     {
         return view('tasks.edit', compact('tasks'));
     }
+    public function update(Request $request, $id)
+    {
+        $task = Task::findOrFail($id);
+        $task->title = $request->title;
+        $task->save();
+
+        return redirect()->route('tasks.edit');
+
+    }
 
     public function destroy(Task $task)
     {
@@ -58,5 +67,13 @@ class TaskController extends Controller
 
         return redirect()->route('tasks.index');
 
+    }
+    public function recibirVariable(Request $request)
+    {
+        // Recibir la variable enviada desde JavaScript
+        $text = $request->input('text');
+
+        // Hacer algo con la variable, por ejemplo, mostrarla
+        echo "Variable recibida desde JavaScript: " . $text;
     }
 }

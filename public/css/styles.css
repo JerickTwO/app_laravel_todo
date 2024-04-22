@@ -12,9 +12,8 @@
     display: none;
 }
 
-body{
+x-app-layout{
     display: flex;
-    background-color: rgb(50, 50, 50);
     font-family: sans-serif;  
     height: 100%;
     justify-content: center;
@@ -23,8 +22,8 @@ body{
 .board {
     padding: 32px;
     gap: 16px;
-    
-    width: 1200px;
+    margin: 0 auto;
+
     overflow: scroll;
 }
 

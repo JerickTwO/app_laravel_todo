@@ -17,4 +17,5 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
     Route::resource('tasks', TaskController::class);
+    Route::post('/ruta-en-laravel', 'MiControlador@recibirVariable');
 });
