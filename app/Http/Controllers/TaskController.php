@@ -7,16 +7,11 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index() 
+    public function index()
     {
         $tasks = Task::all();
         return view('tasks.index', compact('tasks'));
     }
-
-    public function create()
-    {
-        return view('tasks.index', compact('tasks'));
-    }   
 
     public function store(Request $request)
     {
@@ -24,56 +19,35 @@ class TaskController extends Controller
             'title' => 'required',
             // otras reglas de validación
         ]);
+
         $task = new Task();
-        $task->title = $request->title;
         $task->title = $request->input('title');
-    
-        // Establecer la posición predeterminada como "TODO"
-        $task->position = "TODO";
+        $task->position = "TODO"; // Establecer la posición predeterminada como "TODO"
         $task->save();
 
         return redirect()->route('tasks.index');
     }
-    public function show($id)
-    {
 
-    }
-    public function edit(Task $task)
-    {
-        return view('tasks.edit', compact('tasks'));
-    }
     public function update(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
-        $task->title = $request->title;
-        $task->save();
+        $request->validate([
+            'title' => 'required',
+            // otras reglas de validación
+        ]);
 
-        return redirect()->route('tasks.edit');
-
+        $task = Task::find($id);
+        if ($task) {
+            $task->title = $request->input('title');
+            $task->save();
+            return response()->json(['success' => 'Tarea actualizada correctamente', 'title' => $task->title]);
+        } else {
+            return response()->json(['error' => 'Tarea no encontrada'], 404);
+        }
     }
 
     public function destroy(Task $task)
     {
         $task->delete();
-
         return redirect()->route('tasks.index');
-    }
-    // Guardar la pocision de la tarea
-    public function updatePosition(Request $request, $id)
-    {
-        $task = Task::findOrFail($id);
-        $task->position = $request->position;
-        $task->save();
-
-        return redirect()->route('tasks.index');
-
-    }
-    public function recibirVariable(Request $request)
-    {
-        // Recibir la variable enviada desde JavaScript
-        $text = $request->input('text');
-
-        // Hacer algo con la variable, por ejemplo, mostrarla
-        echo "Variable recibida desde JavaScript: " . $text;
     }
 }
