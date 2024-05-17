@@ -18,4 +18,5 @@ Route::middleware([
     })->name('dashboard');
     Route::resource('tasks', TaskController::class);
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::put('/tasks/{task}/update-position', [TaskController::class, 'updatePosition'])->name('tasks.updatePosition');
 });

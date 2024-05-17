@@ -1,28 +1,25 @@
 const draggableElements = document.querySelectorAll(".task");
 const dropAreas = document.querySelectorAll(".swim-lane");
 
-// Función para agregar la clase de arrastre
 const addDragClass = (element) => {
     element.classList.add("is-dragging");
 };
 
-// Función para eliminar la clase de arrastre
 const removeDragClass = (element) => {
     element.classList.remove("is-dragging");
 };
-
-// Función para manejar el evento de arrastre iniciado
 
 const handleDragStart = (event) => {
     addDragClass(event.target);
 };
 
-// Función para manejar el evento de arrastre finalizado
 const handleDragEnd = (event) => {
     removeDragClass(event.target);
+    const currentTask = event.target;
+    const newLane = currentTask.closest('.swim-lane');
+    updateTaskPosition(currentTask.dataset.id, newLane.id);
 };
 
-// Función para manejar el evento de arrastre sobre un área de soltar
 const handleDragOverArea = (event) => {
     event.preventDefault();
     const mouseY = event.clientY;
@@ -31,13 +28,11 @@ const handleDragOverArea = (event) => {
     const currentTask = document.querySelector(".is-dragging");
     if (!bottomTask) {
         dropArea.appendChild(currentTask);
-        
     } else {
         dropArea.insertBefore(currentTask, bottomTask);
     }
 };
 
-// Función para encontrar la tarea más cercana por encima de la posición del ratón
 const insertAboveTask = (dropArea, mouseY) => {
     const tasks = dropArea.querySelectorAll(".task:not(.is-dragging)");
 
@@ -57,7 +52,27 @@ const insertAboveTask = (dropArea, mouseY) => {
     return closestTask;
 };
 
-// Agregar event listeners para el arrastre y soltar
+const updateTaskPosition = (taskId, newPosition) => {
+    fetch(`/tasks/${taskId}/update-position`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ position: newPosition })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Task position updated successfully');
+        } else {
+            console.error('Failed to update task position');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+};
+
+// Add event listeners
 draggableElements.forEach((element) => {
     element.addEventListener("dragstart", handleDragStart);
     element.addEventListener("dragend", handleDragEnd);

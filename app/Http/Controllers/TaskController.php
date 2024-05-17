@@ -50,4 +50,15 @@ class TaskController extends Controller
         $task->delete();
         return redirect()->route('tasks.index');
     }
+    public function updatePosition(Request $request, $id)
+    {
+        $task = Task::find($id);
+        if ($task) {
+            $task->position = $request->input('position');
+            $task->save();
+            return response()->json(['success' => 'Position updated successfully']);
+        } else {
+            return response()->json(['error' => 'Task not found'], 404);
+        }
+    }
 }
